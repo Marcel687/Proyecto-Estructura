@@ -19,9 +19,9 @@ public class GameLoop {
         frame.setResizable(false); //No se puede cambiar el tamaño de la ventana
         frame.setLocationRelativeTo(null); //Centra la pantalla al centro del monitor
         frame.setVisible(true); //hace que la ventana sea visible
-
+        
         // Loop del juego
-        Timer timer = new Timer(100, e -> { //indica que el código dentro del bloque se ejecutará cada 100 milisegundos
+        Timer timer = new Timer(120, e -> { //indica que el código dentro del bloque se ejecutará cada 100 milisegundos
             game.update(); //Avanza la lógica. La serpiente se mueve una casilla, se comprueba si comió o si chocó.
             panel.repaint(); //Fuerza a la interfaz gráfica a borrar el dibujo anterior y pintar el estado nuevo
         });

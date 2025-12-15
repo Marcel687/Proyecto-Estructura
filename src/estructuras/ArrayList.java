@@ -45,4 +45,14 @@ public class ArrayList { //Arreglo Dinámico (Para las Paredes y Ordenamiento)
         }
         return false;
     }
+    
+    public void imprimirEnConsola() {
+        System.out.println("--- Contenido del ArrayList (" + tamaño + " elementos) ---");
+        for (int i = 0; i < tamaño; i++) {
+            // datos[i] es un objeto Point. Point tiene atributos x e y.
+            Point p = datos[i];
+            System.out.println("Índice " + i + ": (" + p.x + ", " + p.y + ")");
+        }
+        System.out.println("----------------------------------------------------");
+    }
 }

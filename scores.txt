@@ -1,4 +1,5 @@
+Marcel,650
 Marcel,100
+Lucho,90
 Luis,80
 Ricardo,70
-Marcel,0
