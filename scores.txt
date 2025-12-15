@@ -1,0 +1,4 @@
+Marcel,100
+Luis,80
+Ricardo,70
+Marcel,0
