@@ -2,13 +2,14 @@
 
 # Proyecto Final: Snake Game (Implementación Manual de Estructuras)
 
-Asignatura: SIS-211 Estructuras de Datos
-Participantes:
+Asignatura: SIS-211 Estructuras de Datos<br>
 
+Participantes:
 - Ricardo Tomas Camacho Montalvo
 - Luis Marcel Murillo Ulloa
 - Luis Rubén Zelaya Rivera
-  Fecha: 15/12/2025
+<br>
+Fecha: 15/12/2025
 
 # Descripción del Proyecto
 
@@ -57,65 +58,188 @@ Generación de Comida (`spawnFoodRecursive`): Se utiliza recursividad para coloc
 
 El proyecto sigue una estructura modular separada por paquetes:
 
+## Arquitectura del Proyecto
+
+El proyecto sigue una estructura modular separada por paquetes:
+
+```text
 JuegoSnake/
 ├── src/
-│ ├── direccion/
-│ │ └── Direccion.java  
-│ │
-│ ├── estructuras/
-│ │ ├── ArrayList.java  
-│ │ ├── ColaEnlazada.java  
-│ │ ├── ListaDoblementeEnlazada.java
-│ │ └── Nodo.java  
-│ │
-│ ├── juego/
-│ │ ├── GameLoop.java (Clase Main)
-│ │ └── GamePanel.java  
-│ │
-│ ├── score/
-│ │ └── ScoreManager.java  
-│ │
-│ └── snake/
-│ ├── Snake.java  
-│ └── SnakeGame.java  
+│   ├── direccion/
+│   │   └── Direccion.java
+│   │
+│   ├── estructuras/
+│   │   ├── ArrayList.java
+│   │   ├── ColaEnlazada.java
+│   │   ├── ListaDoblementeEnlazada.java
+│   │   └── Nodo.java
+│   │
+│   ├── juego/
+│   │   ├── GameLoop.java (Clase Main)
+│   │   └── GamePanel.java
+│   │
+│   ├── score/
+│   │   └── ScoreManager.java
+│   │
+│   └── snake/
+│       ├── Snake.java
+│       └── SnakeGame.java
 │
-├── scores.txt (Se creará automáticamente aquí al guardar un puntaje)
-└── README.md (El archivo de documentación)
+├── scores.txt (Se creará automáticamente al guardar puntaje)
+└── README.md
+```
+# Diagrama de Clases
 
-# Diagrama Simplificado de Clases
-
+```mermaid
 classDiagram
-class GameLoop {
-+main()
-}
-class GamePanel {
--SnakeGame game
--ScoreManager scoreManager
-+paintComponent()
-}
-class SnakeGame {
--Snake snake
--ArrayList walls
-+update()
-+mergeSortWalls()
-}
-class Snake {
--ListaDoblementeEnlazada cuerpo
--ColaEnlazada inputs
-+mover()
-}
-class ListaDoblementeEnlazada {
--Nodo cabeza
--Nodo cola
-+agregarPrimero()
-+eliminarUltimo()
-}
+    %% --- PAQUETE JUEGO ---
+    class GameLoop {
+        +main(args: String[])
+    }
 
-    GameLoop --> GamePanel
-    GamePanel --> SnakeGame
-    SnakeGame --> Snake
-    Snake --> ListaDoblementeEnlazada
+    class GamePanel {
+        -game: SnakeGame
+        -scoreManager: ScoreManager
+        -TILE_SIZE: int
+        -scoreSaved: boolean
+        +GamePanel(game: SnakeGame)
+        +paintComponent(g: Graphics)
+        -handleGameOver(g: Graphics)
+        -drawHighScores(g: Graphics)
+        -drawCenteredString(g: Graphics, text: String, y: int)
+    }
 
+    %% --- PAQUETE SNAKE ---
+    class SnakeGame {
+        -width: int
+        -height: int
+        -snake: Snake
+        -food: Point
+        -walls: ArrayList
+        -gameOver: boolean
+        -score: int
+        +SnakeGame(width: int, height: int)
+        +initGame()
+        -mergeSortWalls(left: int, right: int)
+        -merge(left: int, mid: int, right: int)
+        -generateWalls()
+        -spawnFoodRecursive()
+        -generateFoodRecursive(): Point
+        +update()
+        +reset()
+        +getSnake(): Snake
+        +getFood(): Point
+        +getWalls(): ArrayList
+        +isGameOver(): boolean
+        +getScore(): int
+    }
+
+    class Snake {
+        -cuerpo: ListaDoblementeEnlazada
+        -inputs: ColaEnlazada
+        -actualDir: Direccion
+        +Snake(inicioX: int, inicioY: int)
+        +getBody(): ListaDoblementeEnlazada
+        +colaDireccion(d: Direccion)
+        +resetInputs()
+        +actualizarDireccion()
+        +mover(crecer: boolean): Point
+        +peekNextHead(): Point
+    }
+
+    %% --- PAQUETE ESTRUCTURAS ---
+    class ListaDoblementeEnlazada {
+        -cabeza: Nodo
+        -cola: Nodo
+        -longitud: int
+        +agregarPrimero(p: Point)
+        +eliminarUltimo()
+        +getFirst(): Point
+        +colisiones(p: Point): boolean
+        +iterar(index: int): Point
+        +longitud(): int
+    }
+
+    class ColaEnlazada {
+        -frente: Nodo
+        -fin: Nodo
+        +encolar(d: Direccion)
+        +desencolar(): Direccion
+        +isEmpty(): boolean
+        +clear()
+    }
+
+    class ArrayList {
+        -datos: Point[]
+        -tamaño: int
+        +ArrayList()
+        +agregar(p: Point)
+        -cambiarTamaño()
+        +get(index: int): Point
+        +set(index: int, p: Point)
+        +tamaño(): int
+        +contains(p: Point): boolean
+    }
+
+    class Nodo {
+        ~dato: Point
+        ~siguiente: Nodo
+        ~anterior: Nodo
+        ~valor: Direccion
+        ~proximo: Nodo
+        ~Nodo(dato: Point)
+        ~Nodo(valor: Direccion)
+    }
+
+    %% --- PAQUETE SCORE ---
+    class ScoreManager {
+        -FILE_PATH: String
+        -highScores: Score[]
+        -count: int
+        -MAX_SCORES: int
+        +ScoreManager()
+        -loadScores()
+        +saveScores()
+        +addScore(name: String, points: int)
+        -sortScores()
+        +getHighScores(): Score[]
+        +getCount(): int
+    }
+
+    class Score {
+        +name: String
+        +points: int
+        +Score(name: String, points: int)
+    }
+
+    %% --- PAQUETE DIRECCION ---
+    class Direccion {
+        <<enumeration>>
+        UP
+        DOWN
+        LEFT
+        RIGHT
+    }
+
+    %% RELACIONES
+    GameLoop ..> GamePanel : Crea
+    GameLoop ..> SnakeGame : Crea
+    GamePanel --> SnakeGame : Tiene
+    GamePanel --> ScoreManager : Tiene
+    
+    SnakeGame *-- Snake : Composición
+    SnakeGame *-- ArrayList : Composición (Paredes)
+    
+    Snake *-- ListaDoblementeEnlazada : Composición (Cuerpo)
+    Snake *-- ColaEnlazada : Composición (Inputs)
+    Snake --> Direccion : Usa
+    
+    ListaDoblementeEnlazada o-- Nodo : Agregación
+    ColaEnlazada o-- Nodo : Agregación
+    
+    ScoreManager *-- Score : Clase Interna / Composición
+    ArrayList ..> Point : Gestiona Arrays de
+```
 # Cómo Ejecutar el Proyecto
 
 Opción 1: Desde un IDE (Eclipse, IntelliJ, NetBeans)
@@ -138,8 +262,8 @@ java juego.GameLoop
 
 # Controles
 
-Flechas de Dirección: Mover la serpiente (Arriba, Abajo, Izquierda, Derecha).
-Enter: Reiniciar el juego cuando aparece la pantalla de "Game Over".
+- Flechas de Dirección: Mover la serpiente (Arriba, Abajo, Izquierda, Derecha).
+- Enter: Reiniciar el juego cuando aparece la pantalla de "Game Over".
 
 # Lista de Verificación (Entregables)
 
